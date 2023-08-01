@@ -7,4 +7,5 @@ public class ServiceInterfaceUrlBean {
     private String url;
     private String name;
     private String method;
+    private String host;
 }

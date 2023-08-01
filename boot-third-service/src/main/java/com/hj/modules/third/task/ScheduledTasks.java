@@ -5,13 +5,13 @@ import com.hj.modules.third.data.ServiceUrlData;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.condition.PathPatternsRequestCondition;
-import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.condition.RequestMethodsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -34,6 +34,9 @@ public class ScheduledTasks {
     final RequestMappingHandlerMapping requestMappingHandlerMapping;
 
     final ServiceUrlData serviceUrlData;
+
+    @Value("${hj.third-service.host}")
+    private String host;
 
     // (每30秒执行一次)
     @Scheduled(fixedDelay = 30000)
@@ -65,6 +68,7 @@ public class ScheduledTasks {
             Set<String> patterns = patternsCondition.getPatternValues();
             String servletPath = patterns.stream().findFirst().orElse("");
             interfaceUrlBean.setUrl(servletPath);
+            interfaceUrlBean.setHost(host);
             // 请求方式
             String requestMethod = "";
             RequestMethodsRequestCondition methodsCondition = requestMappingInfo.getMethodsCondition();
