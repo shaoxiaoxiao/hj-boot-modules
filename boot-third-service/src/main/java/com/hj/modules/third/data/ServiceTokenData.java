@@ -22,7 +22,7 @@ public class ServiceTokenData {
     private String port;
 
     /**
-     * ¸ø·şÎñÊ¹ÓÃ »ñÈ¡·şÎñµÄtoken
+     * ç»™æœåŠ¡ä½¿ç”¨ è·å–æœåŠ¡çš„token
      *
      * @return token
      */
@@ -31,9 +31,9 @@ public class ServiceTokenData {
     }
 
     /**
-     * ¸øbootÊ¹ÓÃ ¸ù¾İ·şÎñÃû³Æ»ñÈ¡token
+     * ç»™bootä½¿ç”¨ æ ¹æ®æœåŠ¡åç§°è·å–token
      *
-     * @param serviceName ·şÎñÃû³Æ
+     * @param serviceName æœåŠ¡åç§°
      * @return token
      */
     public String getServiceTokenByName(String serviceName) {
@@ -41,9 +41,9 @@ public class ServiceTokenData {
     }
 
     /**
-     * ·şÎñ×Ô¼º¶¨Ê±½«token ÉèÖÃµ½»º´æÖĞ
+     * æœåŠ¡è‡ªå·±å®šæ—¶å°†token è®¾ç½®åˆ°ç¼“å­˜ä¸­
      *
-     * @param serviceName ·şÎñÃû³Æ
+     * @param serviceName æœåŠ¡åç§°
      */
     public void setServiceTokenByName(String serviceName) {
         redisTemplate.opsForValue().set(BOOT_SERVICE_TOKEN_PREFIX.concat(serviceName), getServiceTokenByPort(), 120, TimeUnit.SECONDS);
