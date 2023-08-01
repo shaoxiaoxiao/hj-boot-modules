@@ -1,0 +1,42 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Java template
+# Compiled class file
+*.class
+
+# Log file
+*.log
+logs
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+!gh-open-sdk-1.12.4.jar
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+.flattened-pom.xml
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+*.iml
+.idea
+*.idea/*
+*target*
+*/unpackage/*
+**/.hbuilderx/
+
+.vscode
+
+**/dist
+**/node_modules
+**/package-lock.json
+
+.fastRequest/
