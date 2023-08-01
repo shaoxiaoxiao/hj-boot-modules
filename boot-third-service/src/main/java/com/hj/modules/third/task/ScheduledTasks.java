@@ -1,6 +1,7 @@
 package com.hj.modules.third.task;
 
 import com.hj.modules.third.bean.ServiceInterfaceUrlBean;
+import com.hj.modules.third.data.ServiceTokenData;
 import com.hj.modules.third.data.ServiceUrlData;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -35,14 +36,20 @@ public class ScheduledTasks {
 
     final ServiceUrlData serviceUrlData;
 
+    final ServiceTokenData serviceTokenData;
+
     @Value("${hj.third-service.host}")
     private String host;
+
+    @Value("${hj.third-service.name}")
+    private String serviceName;
 
     // (每30秒执行一次)
     @Scheduled(fixedDelay = 30000)
     public void redisRefreshTask() {
         try {
             serviceUrlData.setControllerUrlByName(getAllApi());
+            serviceTokenData.setServiceTokenByName(serviceName);
         } catch (Exception e) {
             log.error("任务异常", e);
         }
@@ -64,6 +71,9 @@ public class ScheduledTasks {
             if (patternsCondition == null) {
                 continue;
             }
+            if (!method.isAnnotationPresent(ApiOperation.class)) {
+                continue;
+            }
             ServiceInterfaceUrlBean interfaceUrlBean = new ServiceInterfaceUrlBean();
             Set<String> patterns = patternsCondition.getPatternValues();
             String servletPath = patterns.stream().findFirst().orElse("");
@@ -78,10 +88,9 @@ public class ScheduledTasks {
                 interfaceUrlBean.setMethod(requestMethod);
             }
 
-            if (method.isAnnotationPresent(ApiOperation.class)) {
-                ApiOperation apiOperation = method.getAnnotation(ApiOperation.class);
-                interfaceUrlBean.setName(apiOperation.value());
-            }
+            ApiOperation apiOperation = method.getAnnotation(ApiOperation.class);
+            interfaceUrlBean.setName(apiOperation.value());
+
             list.add(interfaceUrlBean);
         }
         return list;
