@@ -20,6 +20,7 @@
         <module>boot-push</module>
         <module>boot-oss</module>
         <module>boot-export</module>
+        <module>boot-log</module>
     </modules>
 
     <properties>
@@ -33,6 +34,7 @@
         <boot.push.version>${project.version}</boot.push.version>
         <boot.oss.version>${project.version}</boot.oss.version>
         <boot.export.version>${project.version}</boot.export.version>
+        <boot.log.version>${project.version}</boot.log.version>
     </properties>
 
     <dependencyManagement>
@@ -68,11 +70,11 @@
 <!--                <artifactId>boot-push</artifactId>-->
 <!--                <version>${boot.push.version}</version>-->
 <!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>com.hj.modules.oss</groupId>-->
-<!--                <artifactId>boot-oss</artifactId>-->
-<!--                <version>${boot.oss.version}</version>-->
-<!--            </dependency>-->
+            <dependency>
+                <groupId>com.hj.modules.log</groupId>
+                <artifactId>boot-log</artifactId>
+                <version>${boot.log.version}</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>

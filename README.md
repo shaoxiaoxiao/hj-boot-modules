@@ -7,5 +7,6 @@ boot-modules
 	├── boot-export                               导出excel、pdf组件
 	├── boot-oss                                  阿里云OSS等存储类组件
 	├── boot-push                                 邮件、微信、钉钉、短信等推送类组件
+	├── boot-log                                  日志组件
 
 ```
