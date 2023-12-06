@@ -2,6 +2,7 @@ package com.hj.modules.log.annotation;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.hj.modules.log.data.LogTableData;
 import com.hj.modules.log.data.UserData;
 import com.hj.modules.log.data.UserInfo;
 import com.hj.modules.log.model.bean.OperateLogBean;
@@ -9,7 +10,6 @@ import com.hj.modules.log.service.LogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -32,17 +32,20 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * [ 操作日志记录处理,对所有OperateLog注解的Controller进行操作日志监控 ]
+ * [ ApiJson操作日志记录处理 ]
  */
 @Slf4j
 @Aspect
 @Component
-public class OperateLogAspect {
+public class ApiJsonOperateLogAspect {
 
     @Autowired
     private LogService logService;
 
-    @Pointcut("execution(* com.*..*Controller.*(..))")
+    @Autowired
+    private LogTableData tableData;
+
+    @Pointcut("execution(* com.*..*ApiJsonController.*(..))")
     public void logPointCut() {
     }
 
@@ -58,8 +61,8 @@ public class OperateLogAspect {
 
     protected void handleLog(final JoinPoint joinPoint, final Exception e) {
         try {
-            OperateLog operateLog = this.getAnnotationLog(joinPoint);
-            if (operateLog == null) {
+            ApiJsonOperateLog apiJsonOperateLog = this.getAnnotationLog(joinPoint);
+            if (apiJsonOperateLog == null) {
                 return;
             }
             HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
@@ -80,7 +83,12 @@ public class OperateLogAspect {
             // 参数值
             Object[] args = joinPoint.getArgs();
             Map<String, String> map = new LinkedHashMap<>();
+            // 表名
+            String tableName = "";
             for (int i = 0; i < parameters.length; i++) {
+                if ("dataName".equals(parameters[i])) {
+                    tableName = args[i] != null ? (String) args[i] : "";
+                }
                 if (args[i] != null) {
                     map.put(parameters[i], JSON.toJSONString(args[i], SerializerFeature.IgnoreErrorGetter));
                 } else {
@@ -103,14 +111,12 @@ public class OperateLogAspect {
             }
             OperateLogBean operateLogEntity = OperateLogBean.builder().userId(adminUserInfo.getUserId()).userName(adminUserInfo.getAccount())
                     .url(request.getRequestURI()).method(operateMethod).param(params).failReason(failReason).result(result).build();
+            // ApiJson的模块为表名 内容为通用接口上面的注释
             ApiOperation apiOperation = this.getApiOperation(joinPoint);
             if (apiOperation != null) {
                 operateLogEntity.setContent(apiOperation.value());
-                Api api = this.getApi(joinPoint);
-                if (api != null) {
-                    String[] tags = api.tags();
-                    operateLogEntity.setModule(StringUtils.join(tags, ","));
-                }
+                // 根据表名参数获取真实的中文表名 即数据库表注释
+                operateLogEntity.setModule(tableData.getTableName(tableName));
                 logService.addLog(operateLogEntity);
             }
         } catch (Exception exp) {
@@ -119,11 +125,11 @@ public class OperateLogAspect {
         }
     }
 
-    private OperateLog getAnnotationLog(JoinPoint joinPoint) {
+    private ApiJsonOperateLog getAnnotationLog(JoinPoint joinPoint) {
         Signature signature = joinPoint.getSignature();
         MethodSignature methodSignature = (MethodSignature) signature;
         Method method = methodSignature.getMethod();
-        return AnnotationUtils.findAnnotation(method.getDeclaringClass(), OperateLog.class);
+        return AnnotationUtils.findAnnotation(method.getDeclaringClass(), ApiJsonOperateLog.class);
     }
 
     /**
