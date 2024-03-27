@@ -65,7 +65,11 @@ public class ApiJsonOperateLogAspect {
             if (apiJsonOperateLog == null) {
                 return;
             }
-            HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+            ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            if (servletRequestAttributes == null) {
+                return;
+            }
+            HttpServletRequest request = servletRequestAttributes.getRequest();
             String token = request.getHeader("token");
             // 通过反射找到对应类 再调用对应方法获取到
             UserInfo adminUserInfo = UserData.getUserInfo(token);
@@ -121,7 +125,6 @@ public class ApiJsonOperateLogAspect {
             }
         } catch (Exception exp) {
             log.error("保存操作日志异常:{}", exp.getMessage());
-            exp.printStackTrace();
         }
     }
 
