@@ -33,12 +33,12 @@ public class UserData {
 
     public static UserInfo getUserInfo(String token) {
         if (StringUtils.isEmpty(token)) {
-            log.warn("非法的token进行用户信息获取");
+//            log.warn("非法的token进行用户信息获取");
             return null;
         }
         UserInfo userInfo = userData.tokenUserInRedis.get(token);
         if (null == userInfo) {
-            log.warn("非法的token进行用户信息获取");
+//            log.warn("非法的token进行用户信息获取");
             return null;
         }
         return userInfo;
