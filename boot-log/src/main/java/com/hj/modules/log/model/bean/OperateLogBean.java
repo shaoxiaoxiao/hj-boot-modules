@@ -29,7 +29,7 @@ public class OperateLogBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id", type = IdType.NONE)
+    @TableId(value = "id", type = IdType.AUTO)
     @ApiModelProperty(value = "主键")
     private Long id;
 
