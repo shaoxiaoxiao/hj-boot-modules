@@ -22,8 +22,11 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
@@ -84,6 +87,7 @@ public class ApiJsonOperateLogAspect {
             String operateMethod = className + "." + methodName;
             // 参数名数组
             String[] parameters = methodSignature.getParameterNames();
+            Class<?>[] parametersTypes = methodSignature.getParameterTypes();
             // 参数值
             Object[] args = joinPoint.getArgs();
             Map<String, String> map = new LinkedHashMap<>();
@@ -92,6 +96,13 @@ public class ApiJsonOperateLogAspect {
             for (int i = 0; i < parameters.length; i++) {
                 if ("dataName".equals(parameters[i])) {
                     tableName = args[i] != null ? (String) args[i] : "";
+                }
+                // 过滤掉一些不必要的参数 如 HttpServletRequest HttpSession MultipartFile
+                if (parametersTypes[i].equals(HttpServletRequest.class)
+                        || parametersTypes[i].equals(HttpSession.class)
+                        || parametersTypes[i].equals(MultipartFile.class)
+                        || parametersTypes[i].equals(HttpServletResponse.class)) {
+                    continue;
                 }
                 if (args[i] != null) {
                     map.put(parameters[i], JSON.toJSONString(args[i], SerializerFeature.IgnoreErrorGetter));
