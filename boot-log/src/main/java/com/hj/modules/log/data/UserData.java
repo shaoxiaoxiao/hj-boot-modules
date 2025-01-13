@@ -15,7 +15,7 @@ import javax.annotation.PostConstruct;
 public class UserData {
 
     private static final Logger log = LoggerFactory.getLogger(UserData.class);
-    private final static String ADMIN_ONLINE_USER_PREFIX = "BOOT:ADMIN:ONLINE_USER:";
+    private final static String ADMIN_ONLINE_USER_PREFIX = "MC:ADMIN:ONLINE_USER:";
 
     private static UserData userData;
 
